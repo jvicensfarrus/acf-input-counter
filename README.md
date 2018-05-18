@@ -1,3 +1,12 @@
+# Introduction
+
+This is a fork of the [acf-input-counter plugin by John A. Huebner II](https://github.com/Hube2/acf-input-counter)
+by [Mark Rowatt Anderson](https://www.rowatt.com) which adds a counter for ACF wysiwyg fields,
+based on code from a [fork by Matteo Tagliatti](https://github.com/puntonero/acf-input-counter).
+
+It requires at least PHP7.0 and has been tested on ACF Pro 5.6 and WordPress 4.9,
+it may or may not run on earlier versions.
+
 # ACF Input Counter
 
 Supports ACF 5
@@ -65,6 +74,13 @@ make sure they are present.
 
 I've puzzled with how to allow this to be altered and this is the best I've been able to come up with.
 If you have a better idea, let me know in the issues.
+
+### Prevent plugin stylesheet from loading
+By default, the plugin loads its own stylesheet. If you would rather use your own styles,
+add the following filter:
+```
+add_filter( 'acf-input-counter/load-css', '__return_false' );
+```
 
 #### Automatic Updates
 Install [GitHub Updater](https://github.com/afragen/github-updater) on your site if you want to recieve automatic
