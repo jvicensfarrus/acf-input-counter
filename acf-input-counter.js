@@ -37,10 +37,18 @@
 
 	/**
 	 * Get length of content after removing HTML tags so we are only counting
-	 * visible characters.
+	 * visible characters. Also removes linebreaks as wysiwyg and text mode
+	 * aren't consistent (1 char in wysiwyg 2 chars in text mode for para break).
 	 */
 	acf.get_content_without_tags = function( content_html ) {
-		return acf.decode( content_html.replace(/<\/?[^>]+(>|$)/g, "") );
+
+		//remove tags
+		var stripped_content = acf.decode( content_html.replace(/<\/?[^>]+(>|$)/g, "") );
+
+		//remove line breaks
+		stripped_content = stripped_content.replace(/\r?\n|\r/g, "");
+
+		return stripped_content;
 	};
 
 	/**

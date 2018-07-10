@@ -236,9 +236,9 @@ class acf_input_counter {
 		if( $maxlength ) {
 			$content_length = $this->content_length( $value );
 			if ( $content_length > $maxlength ) {
-				$msg = __( 'Field must be no more than %d characters', 'acf-counter' );
+				$msg = __( 'Field is %d characters but must be no more than %d', 'acf-counter' );
 
-				return sprintf( $msg, $maxlength );
+				return sprintf( $msg, $content_length, $maxlength );
 			}
 		}
 
@@ -248,14 +248,21 @@ class acf_input_counter {
 	/**
 	 * Get length of content after stripping out HTML and other things
 	 *
+	 * post_content can include HTML tags, so make sure we strip those out, remove double spaces etc
+	 * and convert any HTML entities to their single unicode character.
+	 * 
 	 * @param $content
 	 *
 	 * @return int content length
 	 */
 	private function content_length( $content ) {
-		//post_content can include HTML tags, so make sure we strip those out, remove double spaces etc
-		//and convert any HTML entities to their single unicode character
+
 		$content  = strip_tags( $content );
+
+		//remove linebreaks
+		$content = str_replace( "\n", '', $content );
+		$content = str_replace( "\r", '', $content );
+
 		$content  = preg_replace( '#[\s]{2,}#', ' ', $content );
 		$content  = html_entity_decode( $content, ENT_HTML5 );
 
