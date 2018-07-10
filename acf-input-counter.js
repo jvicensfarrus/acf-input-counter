@@ -6,24 +6,18 @@
 	 * We don't use the maxlength attribute as that limits the length
 	 * in text mode to content including all HTML tags.
 	 *
-	 * @param e
+	 * @param $acf_field
 	 */
-	acf.set_wysiwyg_textarea_maxlength = function (e) {
+	acf.set_wysiwyg_textarea_maxlength = function ($acf_field) {
 
-		var self = $(e.$field);
-		self.$el = self.find('.acf-input');
+		var fieldkey = $acf_field.data('key');
 
-		self.$textarea = self.$el.find('textarea');
-		var $parent = self.$el.parent();
-		var fieldkey = $parent.data('key');
+		/** @var object acf_input_counter_data set in HTML */
+		var maxlength = acf_input_counter_data[fieldkey];
 
-		if (!self.$el.data('maxlength')) {
-			/** @var object acf_input_counter_data set in HTML */
-			var maxlength = acf_input_counter_data[fieldkey];
+		$acf_field.data('maxlength', maxlength);
 
-			self.$textarea.data('maxlength', maxlength);
-		}
-
+		return maxlength;
 	};
 
 	/**
@@ -43,10 +37,18 @@
 
 	/**
 	 * Get length of content after removing HTML tags so we are only counting
-	 * visible characters.
+	 * visible characters. Also removes linebreaks as wysiwyg and text mode
+	 * aren't consistent (1 char in wysiwyg 2 chars in text mode for para break).
 	 */
 	acf.get_content_without_tags = function( content_html ) {
-		return acf.decode( content_html.replace(/<\/?[^>]+(>|$)/g, "") );
+
+		//remove tags
+		var stripped_content = acf.decode( content_html.replace(/<\/?[^>]+(>|$)/g, "") );
+
+		//remove line breaks
+		stripped_content = stripped_content.replace(/\r?\n|\r/g, "");
+
+		return stripped_content;
 	};
 
 	/**
@@ -54,15 +56,15 @@
 	 *
 	 * @param e
 	 * @param content
-	 * @param $textarea
+	 * @param maxlength
+	 *
 	 * @returns {boolean}
 	 */
-	acf.wysiwyg_max_length_reached = function(e, content, $textarea) {
+	acf.wysiwyg_max_length_reached = function(e, content, maxlength ) {
 		var allowed_keystroke = false;
-		var maxlength = $textarea.data('maxlength');
 
 		//maxlength not defined see acf.set_wysiwyg_textarea_maxlength() below
-		if (typeof (maxlength) === 'undefined') return;
+		if (typeof (maxlength) === 'undefined' || ! maxlength ) return;
 
 		var length = acf.get_content_without_tags( content ).length;
 
@@ -100,6 +102,9 @@
 	 */
 	acf.add_filter('wysiwyg_tinymce_settings', function (init, id) {
 
+		var $acf_field = $('#'+id).parents('.acf-field');
+		var maxlength = acf.set_wysiwyg_textarea_maxlength( $acf_field );
+
 		//extend parent init.setup() method
 		var _setup = init.setup;
 		init.setup = function(editor) {
@@ -109,10 +114,9 @@
 			 */
 			editor.on('keyDown', function(e) {
 				var content = editor.getContent();
-				var $textarea = $(editor.getElement());;
 
 				//don't allow typing after maxlength
-				if( acf.wysiwyg_max_length_reached(e, content, $textarea ) ) {
+				if( acf.wysiwyg_max_length_reached(e, content, maxlength ) ) {
 					tinymce.dom.Event.cancel(e);
 				}
 			});
@@ -175,7 +179,7 @@
 			'load': 'set_wysiwyg_textarea_maxlength'
 		},
 		set_wysiwyg_textarea_maxlength: function () {
-			acf.set_wysiwyg_textarea_maxlength(this)
+			acf.set_wysiwyg_textarea_maxlength(this.$field);
 		},
 
 		//events are for wysiwyg field in text mode
@@ -197,9 +201,10 @@
 		limit_chars: function (e) {
 			var content = acf.get_content_without_tags( e.$el.val() );
 			var $textarea = e.$el;
+			var maxlength = $textarea.parents('.acf-field').data('maxlength');
 
 			//don't allow typing after maxlength
-			if( acf.wysiwyg_max_length_reached(e, content, $textarea ) ) {
+			if( acf.wysiwyg_max_length_reached(e, content, maxlength ) ) {
 				e.preventDefault();
 			}
 		},

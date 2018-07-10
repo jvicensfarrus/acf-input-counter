@@ -4,7 +4,7 @@ This is a fork of the [acf-input-counter plugin by John A. Huebner II](https://g
 by [Mark Rowatt Anderson](https://www.rowatt.com) which adds a counter for ACF wysiwyg fields,
 based on code from a [fork by Matteo Tagliatti](https://github.com/puntonero/acf-input-counter).
 
-It requires at least PHP7.0 and has been tested on ACF Pro 5.6 and WordPress 4.9,
+It requires at least PHP7.0 and has been tested on ACF Pro 5.6 and 5.7, and WordPress 4.9,
 it may or may not run on earlier versions.
 
 # ACF Input Counter
