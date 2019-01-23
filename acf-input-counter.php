@@ -2,14 +2,14 @@
 
 /*
 	Plugin Name: ACF Input Counter
-	Plugin URI: https://github.com/rowatt/acf-input-counter/
+	Plugin URI: https://github.com/jvicensfarrus/acf-input-counter
 	Description: Show character count for limited text and textarea fields
 	Version: 1.5.1
-	Author: John A. Huebner II, Mark Rowatt Anderson
+	Author: John A. Huebner II, Mark Rowatt Anderson, Jordi Vicens Farrús
 	Author URI: https://github.com/Hube2/
 	Text-domain: acf-counter
 	Domain-path: languages
-	GitHub Plugin URI: https://github.com/rowatt/acf-input-counter/
+	GitHub Plugin URI: https://github.com/jvicensfarrus/acf-input-counter
 	License: GPL
 */
 
@@ -145,7 +145,7 @@ class acf_input_counter {
 		}
 
 		$len = $this->content_length( $field[ 'value' ] );
-		$max = $field[ 'maxlength' ] ?? 0;
+		$max = $field[ 'maxlength' ] ? $field[ 'maxlength' ] : 0;
 
 		$classes = apply_filters( 'acf-input-counter/classes', array() );
 		$ids     = apply_filters( 'acf-input-counter/ids', array() );
@@ -231,7 +231,7 @@ class acf_input_counter {
 	 */
 	public function _validate_maxlength( $valid, $value, $field, $input ) {
 
-		$maxlength = $field['maxlength'] ?? 0;
+		$maxlength = $field['maxlength'] ? $field['maxlength'] : 0;
 
 		if( $maxlength ) {
 			$content_length = $this->content_length( $value );
@@ -250,7 +250,7 @@ class acf_input_counter {
 	 *
 	 * post_content can include HTML tags, so make sure we strip those out, remove double spaces etc
 	 * and convert any HTML entities to their single unicode character.
-	 * 
+	 *
 	 * @param $content
 	 *
 	 * @return int content length
