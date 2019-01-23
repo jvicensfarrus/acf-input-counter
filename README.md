@@ -6,7 +6,7 @@ based on code from a [forked by Mark Rowatt Anderson](https://www.rowatt.com).
 
 It requires at least PHP5.6 and has been tested on ACF Pro 5.6 and 5.7, WordPress 4.9, WordPress 5,
 it may or may not run on earlier versions.
-You can take a look on the forked version by [Mark Rowatt Anderson here]()https://github.com/rowatt/acf-input-counter.
+You can take a look on the forked version by [Mark Rowatt Anderson here](https://github.com/rowatt/acf-input-counter).
 
 # ACF Input Counter
 
